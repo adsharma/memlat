@@ -14,12 +14,12 @@ def alloc_buf(size):
 
 def permute_buf(begin, size, linesize=64):
    addr = ctypes.addressof(begin)
-   cache_lines = range(addr, addr + size, linesize)
+   cache_lines = list(range(addr, addr + size, linesize))
    random.shuffle(cache_lines)
    # setup pointers according to random shuffle
    for off in range(0, size, linesize):
-       index = off/linesize
-       pindex = off/ctypes.sizeof(ctypes.c_void_p)
+       index = int(off/linesize)
+       pindex = int(off/ctypes.sizeof(ctypes.c_void_p))
        void_p = ctypes.pointer(begin)
        void_p[pindex] =  cache_lines[index]
 
@@ -41,4 +41,4 @@ if __name__ == '__main__':
     best = min(timeit.repeat("from __main__ import measure; measure();",
                             repeat=3,
                             number=1))
-    print "Memory latency: ",  best * 1e9/options.num, " ns"
+    print("Memory latency: ",  best * 1e9/options.num, " ns")
